@@ -1,0 +1,72 @@
+{
+  "root": true,
+  "ignorePatterns": ["**/*"],
+  "plugins": ["@nx"],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "rules": {
+        "@nx/enforce-module-boundaries": [
+          "error",
+          {
+            "enforceBuildableLibDependency": true,
+            "allow": [],
+            "depConstraints": [
+              {
+                "sourceTag": "*",
+                "onlyDependOnLibsWithTags": ["*"]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "extends": ["plugin:@nx/typescript"],
+      "rules": {
+        "indent": ["error", 2],
+        "@typescript-eslint/object-curly-spacing": ["error", "always"],
+        "object-curly-spacing": ["error", "always"],
+        "@typescript-eslint/key-spacing": ["error"],
+        "key-spacing": ["error"],
+        "keyword-spacing": ["error"],
+        "@typescript-eslint/keyword-spacing": ["error"],
+        "max-len": [
+          "error",
+          {
+            "code": 150,
+            "tabWidth": 2,
+            "ignoreStrings": true
+          }
+        ],
+        "comma-dangle": ["error", "only-multiline"],
+        "semi": ["error", "never"],
+        "@typescript-eslint/semi": ["error", "never"],
+        "@typescript-eslint/no-empty-interface": "off",
+        "@typescript-eslint/no-empty-function": "off",
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": [
+          "error",
+          {
+            "argsIgnorePattern": "^_",
+            "varsIgnorePattern": "^_",
+            "caughtErrorsIgnorePattern": "^_"
+          }
+        ]
+      }
+    },
+    {
+      "files": ["*.js", "*.jsx"],
+      "extends": ["plugin:@nx/javascript"],
+      "rules": {}
+    },
+    {
+      "files": ["*.spec.ts", "*.spec.tsx", "*.spec.js", "*.spec.jsx"],
+      "env": {
+        "jest": true
+      },
+      "rules": {}
+    }
+  ]
+}

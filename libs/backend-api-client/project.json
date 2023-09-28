@@ -1,0 +1,67 @@
+{
+  "name": "backend-api-client",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/backend-api-client/src",
+  "projectType": "library",
+  "targets": {
+    "codegen": {
+      "dependsOn": [
+        {
+          "projects": ["backend"],
+          "target": "openapi"
+        }
+      ],
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "rm -rf {projectRoot}/src/generated"
+          },
+          {
+            "command": "openapi-generator-cli generate -i apps/backend/src/generated/openapi.yaml -o {projectRoot}/src/generated/ -g typescript-axios --additional-properties=supportsES6=true"
+          }
+        ]
+      },
+      "inputs": ["{workspaceRoot}/apps/backend/src/generated/openapi.yaml"],
+      "outputs": ["{projectRoot}/src/generated"]
+    },
+    "build": {
+      "dependsOn": ["codegen"],
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/backend-api-client",
+        "tsConfig": "libs/backend-api-client/tsconfig.lib.json",
+        "packageJson": "libs/backend-api-client/package.json",
+        "main": "libs/backend-api-client/src/index.ts",
+        "assets": ["libs/backend-api-client/*.md"]
+      }
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs backend-api-client {args.ver} {args.tag}",
+      "dependsOn": ["build"]
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/backend-api-client/**/*.ts", "libs/backend-api-client/package.json"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/backend-api-client/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    }
+  },
+  "tags": []
+}
